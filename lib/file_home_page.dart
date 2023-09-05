@@ -110,17 +110,14 @@ void createFolder(BuildContext context, String folder) {
           });
 }
 
-
-
-
-void uploadFile(BuildContext context,FilePickerResult? pickerResult){
+void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
   var lastItem = Provider.of<FilePageModel>(context, listen: false).lastItem;
   var path = lastItem.path;
-  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult).then((value) => {
-    if (value) {loadFileAsset(context, lastItem.path, false)}
-  });
+  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult)
+      .then((value) => {
+            if (value) {loadFileAsset(context, lastItem.path, false)}
+          });
 }
-
 
 class FilePage extends StatefulWidget {
   const FilePage({super.key});
@@ -204,7 +201,8 @@ class _OperateViewState extends State<OperateView> {
           icon: const Icon(Icons.upload),
           label: const Text("上传"),
           onPressed: () {
-            Future<FilePickerResult?> result = FilePicker.platform.pickFiles();
+            Future<FilePickerResult?> result =
+                FilePicker.platform.pickFiles(withReadStream: true);
             result.then((value) {
               if (value != null) {
                 uploadFile(context2, value);
@@ -279,7 +277,9 @@ class _PathViewState extends State<PathView> {
           onPressed: !hasBack
               ? null
               : () {
-                  PathItem pathItem = Provider.of<FilePageModel>(context, listen: false).backItems;
+                  PathItem pathItem =
+                      Provider.of<FilePageModel>(context, listen: false)
+                          .backItems;
                   loadFileAsset(context, pathItem.path, true);
                 },
         ),
@@ -295,7 +295,9 @@ class _PathViewState extends State<PathView> {
               onPressed: !hasForward
                   ? null
                   : () {
-                      PathItem pathItem = Provider.of<FilePageModel>(context, listen: false).forwardItems;
+                      PathItem pathItem =
+                          Provider.of<FilePageModel>(context, listen: false)
+                              .forwardItems;
                       loadFileAsset(context, pathItem.path, true);
                     },
             )),
@@ -330,9 +332,12 @@ class FileListViewState extends State<FileListView> {
               loadFileAsset(context, items[i].path, false);
             } else {
               Future.delayed(const Duration(milliseconds: 100)).then((value) {
-                FilePicker.platform.saveFile(fileName: items[i].name).then((value) {
+                FilePicker.platform
+                    .saveFile(fileName: items[i].name)
+                    .then((value) {
                   if (value != null && value.isNotEmpty) {
-                    FileOperate.downLoadFile(fileItem: items[i], localPath: value);
+                    FileOperate.downLoadFile(
+                        fileItem: items[i], localPath: value);
                   }
                 });
               });

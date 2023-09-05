@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'file_home_page.dart';
+import 'file_transfer_page.dart';
 void main() => runApp(const HomeApp());
 
 class HomeApp extends StatelessWidget {
@@ -38,7 +39,7 @@ class HomePageState extends State<HomePage> {
       largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
       useDrawer: true,
       extendedNavigationRailWidth:120,
-      internalAnimations: false,
+      internalAnimations: true,
       selectedIndex: _selectedTab,
       onSelectedIndexChange: (int index) {
         _onItemTapped(index);
@@ -60,7 +61,12 @@ class HomePageState extends State<HomePage> {
           label: '设置',
         ),
       ],
-      body: (_) => const FileHomePage(),
+      body: (_){
+        if(_selectedTab==1){
+          return const FileTransferPage();
+        }
+        return const FileHomePage();
+      },
     );
   }
 }

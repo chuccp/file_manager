@@ -32,16 +32,21 @@ class FileOperateWeb {
       required FilePickerResult? pickerResult,
       dio.ProgressCallback? progressCallback}) async {
     PlatformFile? platformFile = pickerResult?.files.first;
-    if (platformFile != null) {
+    if (platformFile != null ) {
       final formData = dio.FormData.fromMap({
+        'Path': path_,
         'file': dio.MultipartFile.fromStream(
-            () => platformFile.readStream!, platformFile.size,
+            () =>platformFile.readStream!, platformFile.size,
             filename: platformFile.name)
       });
+      print("=========1${root}upload");
       var response = await httpClient.post("${root}upload", data: formData);
+      print("==========2${root}upload");
       if (response.statusCode == 200) {
         return Future.value(true);
       }
+    }else{
+      print("=========3${root}upload");
     }
 
     return Future.value(false);

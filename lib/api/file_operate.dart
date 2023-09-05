@@ -31,6 +31,7 @@ class FileOperate {
 
   static Future<bool> uploadNewFile({required String path, required FilePickerResult? pickerResult, ProgressCallback? progressCallback}) {
     if(platform.isWeb){
+      print("===============");
       return FileOperateWeb.uploadNewFile(path_: path, pickerResult: pickerResult);
     }
     File file = File(pickerResult!.files.single.path!!);
