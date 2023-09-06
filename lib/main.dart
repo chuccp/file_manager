@@ -51,8 +51,8 @@ class HomePageState extends State<HomePage> {
           label: '空间',
         ),
         NavigationDestination(
-          icon: Icon(Icons.sync_outlined),
-          selectedIcon: Icon(Icons.sync),
+          icon: Badge(label:Text("1"), child: Icon(Icons.sync_outlined)) ,
+          selectedIcon:  Badge(label:Text("1"), child: Icon(Icons.sync)) ,
           label: '传输',
         ),
         NavigationDestination(
