@@ -8,12 +8,7 @@ import 'file_operate_web.dart';
 import '../util/platform.dart' as platform;
 
 class FileOperate {
-  static Future<List<Future<FileItem>>> list({required String path_}) {
-    if (platform.isWeb) {
-      return FileOperateWeb.list(path_: path_);
-    }
-    return FileOperateLocal.list(path_: path_);
-  }
+
 
   static Future<List<FileItem>> listSync({required String path_}) {
     if (platform.isWeb) {

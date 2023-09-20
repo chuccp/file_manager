@@ -1,71 +1,51 @@
+import 'package:file_manager/api/user_operate.dart';
+import 'package:file_manager/entry/Info.dart';
+import 'package:file_manager/home.dart';
+import 'package:file_manager/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'file_home_page.dart';
 import 'file_transfer_page.dart';
+import 'login.dart';
+
 void main() => runApp(const HomeApp());
 
 class HomeApp extends StatelessWidget {
   const HomeApp({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      const MaterialApp(home: HomePage(title: 'Drawer Header'));
+  Widget build(BuildContext context) => MaterialApp(home: Builder(
+        builder: (BuildContext context) {
+          return const SelectPage();
+        },
+      ));
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+class SelectPage extends StatefulWidget {
+  const SelectPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => HomePageState();
+  State<StatefulWidget> createState() => _SelectPageState();
 }
 
-class HomePageState extends State<HomePage> {
-  int _selectedTab = 0;
-  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+class _SelectPageState extends State<SelectPage> {
+  late Future<InfoItem> futureAlbum;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedTab = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = UserOperateWeb.info();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveScaffold(
-      drawerBreakpoint: const WidthPlatformBreakpoint(end: 700),
-      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 700, end: 1000),
-      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1000),
-      useDrawer: true,
-      extendedNavigationRailWidth:120,
-      internalAnimations: true,
-      selectedIndex: _selectedTab,
-      onSelectedIndexChange: (int index) {
-        _onItemTapped(index);
-      },
-      destinations: const <NavigationDestination>[
-        NavigationDestination(
-          icon: Icon(Icons.inbox_outlined),
-          selectedIcon: Icon(Icons.inbox),
-          label: '空间',
-        ),
-        NavigationDestination(
-          icon: Badge(label:Text("1"), child: Icon(Icons.sync_outlined)) ,
-          selectedIcon:  Badge(label:Text("1"), child: Icon(Icons.sync)) ,
-          label: '传输',
-        ),
-        NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings),
-          label: '设置',
-        ),
-      ],
-      body: (_){
-        if(_selectedTab==1){
-          return const FileTransferPage();
+    return FutureBuilder<InfoItem>(
+      future: futureAlbum,
+      builder: (BuildContext context, AsyncSnapshot<InfoItem> snapshot) {
+        if (snapshot.hasData && snapshot.data!.hasConfig) {
+          return const HomePage(title: "主页");
         }
-        return const FileHomePage();
+        return const SettingPage(title: "设置页面");
       },
     );
   }

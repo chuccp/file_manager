@@ -87,10 +87,12 @@ class FileHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    return  Container(
+      padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+      child:ChangeNotifierProvider(
       create: (context) => FilePageModel(),
       child: const FilePage(),
-    );
+    ) ,)  ;
   }
 }
 
