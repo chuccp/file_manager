@@ -8,8 +8,10 @@ import 'dart:developer' as developer;
 
 import 'package:provider/provider.dart';
 
-import 'component/file_icon_button.dart';
-import 'entry/file.dart';
+import '../component/file_icon_button.dart';
+import '../entry/file.dart';
+
+
 
 class FilePageModel extends ChangeNotifier {
   final List<PathItem> _pathItem = [];

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'component/listview_navigation.dart';
+import '../component/listview_navigation.dart';
+
+
 
 class FileTransferPage extends StatefulWidget {
   const FileTransferPage({super.key});

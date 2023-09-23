@@ -1,52 +1,55 @@
-import 'package:file_manager/api/user_operate.dart';
 import 'package:file_manager/entry/Info.dart';
-import 'package:file_manager/home.dart';
-import 'package:file_manager/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
-import 'file_home_page.dart';
-import 'file_transfer_page.dart';
-import 'login.dart';
+import 'package:go_router/go_router.dart';
 
-void main() => runApp(const HomeApp());
+import 'api/user_operate.dart';
+import 'setting.dart';
+import 'component/ex_scaffold.dart';
 
-class HomeApp extends StatelessWidget {
+final _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', builder: (context, state) => const HomeApp(), routes: [
+      GoRoute(
+          path: 'setting',
+          builder: (context, state) {
+            final Map<String, InfoItem> params =
+                state.extra! as Map<String, InfoItem>;
+            final InfoItem info = params['info']!;
+            return SettingPage(info: info);
+          }),
+      GoRoute(path: 'net', builder: (context, state) => const HomeApp())
+    ]),
+  ],
+);
+
+void main() => runApp(MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: "首页",
+      routerConfig: _router,
+    ));
+
+class HomeApp extends StatefulWidget {
   const HomeApp({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(home: Builder(
-        builder: (BuildContext context) {
-          return const SelectPage();
-        },
-      ));
+  State<StatefulWidget> createState() => _HomeAppState();
 }
 
-class SelectPage extends StatefulWidget {
-  const SelectPage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _SelectPageState();
-}
-
-class _SelectPageState extends State<SelectPage> {
-  late Future<InfoItem> futureAlbum;
+class _HomeAppState extends State<HomeApp> {
+  void reload() {
+    UserOperateWeb.info().then((value) => {
+          context.replace("/setting", extra: {"info": value})
+        });
+  }
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = UserOperateWeb.info();
+    reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<InfoItem>(
-      future: futureAlbum,
-      builder: (BuildContext context, AsyncSnapshot<InfoItem> snapshot) {
-        if (snapshot.hasData && snapshot.data!.hasConfig) {
-          return const HomePage(title: "主页");
-        }
-        return const SettingPage(title: "设置页面");
-      },
-    );
+    return const Text("加载中");
   }
 }
