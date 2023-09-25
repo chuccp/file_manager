@@ -1,6 +1,11 @@
 class AddressItem {
   AddressItem(this.host, this.port);
 
-  final int port;
-  final String host;
+  int port;
+  String host;
+
+  @override
+  String toString() {
+    return "$host:$port";
+  }
 }

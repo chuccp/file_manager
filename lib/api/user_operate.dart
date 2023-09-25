@@ -22,21 +22,29 @@ class UserOperateWeb {
     return infoItem;
   }
 
-  static Future<Response> addAdminUser(BuildContext context,
+  static Future<Response> addAdminUser(
       {required String username,
       required String password,
       required String rePassword,
       required bool isNatClient,
-      required bool isNatServer})  async {
+      required bool isNatServer}) async {
     var url = "${root}addAdmin";
     var postData = {
-      "username":username,
+      "username": username,
       "password": password,
       "rePassword": rePassword,
       "isNatClient": isNatClient,
       "isNatServer": isNatServer
     };
-    var response = await httpClient.post(url,data: postData);
+    var response = await httpClient.post(url, data: postData);
+    var data = response.data;
+    var res = Response.fromJson(data);
+    return res;
+  }
+
+  static Future<Response> connect({required String address}) async {
+    var url = "${root}connect?address=$address";
+    var response = await httpClient.get(url);
     var data = response.data;
     var res = Response.fromJson(data);
     return res;

@@ -1,9 +1,11 @@
 import 'dart:html';
 
 import 'package:file_manager/component/ex_card.dart';
+import 'package:file_manager/entry/address.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'api/user_operate.dart';
+import 'component/ex_address_input.dart';
 import 'component/ex_dialog.dart';
 import 'component/ex_scaffold.dart';
 import 'entry/Info.dart';
@@ -91,7 +93,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   icon: const Icon(Icons.login),
                   label: const Text("下一步"),
                   onPressed: () {
-                    UserOperateWeb.addAdminUser(context,
+                    UserOperateWeb.addAdminUser(
                             username: usernameController.value.text,
                             password: passwordController.value.text,
                             rePassword: rePasswordController.value.text,
@@ -179,60 +181,46 @@ class NetSetPage extends StatefulWidget {
 }
 
 class _NetSetPageState extends State<NetSetPage> {
+  var address = <AddressItem>[];
+
+  @override
+  void initState() {
+    address = widget.info.address!;
+  }
+
+  void addAddress() {
+    setState(() {
+      address.add(AddressItem("", 0));
+    });
+  }
+
+  void deleteAddress(AddressItem value) {
+    setState(() {
+      address.remove(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    var address = widget.info.address;
-
-    var hostControllers = <TextEditingController>[
+    var addressControllers = <AddressController>[
       for (int i = 0; i < address!.length; i++)
-        TextEditingController(text:address.elementAt(i).host )
-    ];
-    var portControllers = <TextEditingController>[
-      for (int i = 0; i < address!.length; i++)
-        TextEditingController(text:address.elementAt(i).port.toString() )
+        AddressController(address.elementAt(i))
     ];
     var wList = <Widget>[
       for (int i = 0; i < address!.length; i++)
-        SizedBox(
-          width: 380,
-          child: Flex(direction: Axis.horizontal, children: <Widget>[
-            const Spacer(
-              flex: 1,
-            ),
-             Expanded(
-              flex: 4,
-              child: TextField(
-                controller: hostControllers.elementAt(i),
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: "IP地址",
-                ),
-              ),
-            ),
-            const Spacer(
-              flex: 1,
-            ),
-             Expanded(
-              flex: 4,
-              child: TextField(
-                controller: portControllers.elementAt(i),
-                decoration: const InputDecoration(
-                  labelText: "端口号",
-                ),
-              ),
-            ),
-            const Spacer(
-              flex: 1,
-            ),
-            Expanded(
-              flex: 3,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text("测试"),
-              ),
-            )
-          ]),
+        AddressInput(
+          autofocus: i == 0,
+          addressController: addressControllers.elementAt(i),
+          onDeletePressed: () {
+            deleteAddress(address.elementAt(i));
+          },
+          onTestPressed: () {
+            UserOperateWeb.connect(address: address.elementAt(i).toString())
+                .then((value) => {if (value.isOK()) {
+
+                alertDialog(context: context, msg: value.data)
+            }});
+          },
         )
     ];
 
@@ -246,7 +234,9 @@ class _NetSetPageState extends State<NetSetPage> {
           OutlinedButton.icon(
             icon: const Icon(Icons.add),
             label: const Text("添加"),
-            onPressed: () {},
+            onPressed: () {
+              addAddress();
+            },
           ),
           ElevatedButton.icon(
             icon: const Icon(Icons.login),
@@ -257,7 +247,7 @@ class _NetSetPageState extends State<NetSetPage> {
           )
         ],
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: wList,
       ),
