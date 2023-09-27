@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:io' as io;
+import 'package:download/download.dart';
+import 'package:file_manager/util/download.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import '../component/ex_dialog.dart';
 import '../entry/Info.dart';
@@ -36,7 +40,7 @@ class UserOperateWeb {
       "isNatClient": isNatClient,
       "isNatServer": isNatServer
     };
-    var response = await httpClient.post(url, data: postData);
+    var response = await httpClient.post(url, data: jsonEncode(postData));
     var data = response.data;
     var res = Response.fromJson(data);
     return res;
@@ -48,5 +52,19 @@ class UserOperateWeb {
     var data = response.data;
     var res = Response.fromJson(data);
     return res;
+  }
+
+  static Future<Response> addRemoteAddress(
+      {required List<String> address}) async {
+    var url = "${root}addRemoteAddress";
+    var response = await httpClient.post(url, data: jsonEncode(address));
+    var data = response.data;
+    var res = Response.fromJson(data);
+    return res;
+  }
+
+  static Future<void> downloadCert() async {
+    var url = "${root}downloadCert";
+    downloadUrl(url);
   }
 }
