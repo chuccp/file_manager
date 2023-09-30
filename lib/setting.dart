@@ -1,5 +1,3 @@
-
-
 import 'package:file_manager/component/ex_card.dart';
 import 'package:file_manager/entry/address.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +10,9 @@ import 'entry/Info.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key, required this.navigationShell});
+
   final StatefulNavigationShell navigationShell;
+
   @override
   Widget build(BuildContext context) {
     return ExScaffold(
@@ -57,6 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
     usernameController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return ExCard(
@@ -84,7 +85,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             isNatServer: _beNatSelected)
                         .then((value) {
                       if (value.isOK()) {
-                        GoRouter.of(context).go("/netSetPage", extra: {"info": widget.info});
+                        GoRouter.of(context)
+                            .go("/netSetPage", extra: {"info": widget.info});
                       } else {
                         alertDialog(context: context, msg: value.data);
                       }
@@ -224,8 +226,10 @@ class _NetSetPageState extends State<NetSetPage> {
             label: const Text("确认"),
             onPressed: () {
               var list = address.map((e) => e.toString()).toList();
-              UserOperateWeb.addRemoteAddress(address: list)
-                  .then((value) => {context.replace("/setting/cert")});
+              UserOperateWeb.addRemoteAddress(address: list).then((value) => {
+                    GoRouter.of(context)
+                        .go("/certPage", extra: {"info": widget.info})
+                  });
             },
           )
         ],
@@ -248,9 +252,6 @@ class CertPage extends StatefulWidget {
 }
 
 class _CertPageState extends State<CertPage> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return ExCard(
@@ -276,7 +277,7 @@ class _CertPageState extends State<CertPage> {
               flex: 3,
               child: ElevatedButton(
                 onPressed: () {
-                  context.go("/");
+                  GoRouter.of(context).go("/load");
                 },
                 child: const Text("去登录"),
               ),
@@ -285,6 +286,4 @@ class _CertPageState extends State<CertPage> {
       child: const Text("远程登录的时候需要证书才能登录，避免被监听"),
     );
   }
-
-
 }

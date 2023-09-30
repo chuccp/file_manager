@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class ExScaffold extends StatelessWidget {
   const ExScaffold({super.key, required this.title, this.body});
@@ -17,8 +18,10 @@ class ExScaffold extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: ()  {
-            if (Navigator.of(context).canPop()) {Navigator.pop(context,true);}
+          onPressed: () {
+            if (GoRouter.of(context).canPop()) {
+              GoRouter.of(context).pop();
+            }
           },
         ),
       ),
