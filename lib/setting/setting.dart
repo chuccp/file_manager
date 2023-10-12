@@ -2,11 +2,11 @@ import 'package:file_manager/component/ex_card.dart';
 import 'package:file_manager/entry/address.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'api/user_operate.dart';
-import 'component/ex_address_input.dart';
-import 'component/ex_dialog.dart';
-import 'component/ex_scaffold.dart';
-import 'entry/Info.dart';
+import '../api/user_operate.dart';
+import '../component/ex_address_input.dart';
+import '../component/ex_dialog.dart';
+import '../component/ex_scaffold.dart';
+import '../entry/Info.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key, required this.navigationShell});
@@ -21,20 +21,6 @@ class SettingPage extends StatelessWidget {
     );
   }
 }
-// const SettingPage({super.key,  required this.navigationShell});
-// final StatefulNavigationShell navigationShell;
-// @override
-// State<StatefulWidget> createState() => _SettingPageState();
-// class _SettingPageState extends State<SettingPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return ExScaffold(
-//       title: "账号设置",
-//       body: widget.navigationShell,
-//     );
-//   }
-// }
-
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.info});
 
@@ -85,8 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             isNatServer: _beNatSelected)
                         .then((value) {
                       if (value.isOK()) {
-                        GoRouter.of(context)
-                            .go("/netSetPage", extra: {"info": widget.info});
+                        GoRouter.of(context).go("/netSetPage", extra: {"info": widget.info});
                       } else {
                         alertDialog(context: context, msg: value.data);
                       }

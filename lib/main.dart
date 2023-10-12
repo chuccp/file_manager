@@ -1,8 +1,10 @@
 import 'package:file_manager/entry/Info.dart';
+import 'package:file_manager/signin/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'api/user_operate.dart';
-import 'setting.dart';
+import 'file/file_mange.dart';
+import 'setting/setting.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() {
@@ -26,6 +28,18 @@ void main() {
                       return const LoadingPage();
                     },
                   ),
+                  GoRoute(
+                    path: '/signIn',
+                    builder: (context, state) {
+                      return const SignInPage();
+                    },
+                  ),
+                  GoRoute(
+                    path: '/file',
+                    builder: (context, state) {
+                      return const FileManage();
+                    },
+                  ),
                   StatefulShellRoute.indexedStack(
                       builder: (context, state, navigationShell) {
                         return SettingPage(
@@ -42,8 +56,7 @@ void main() {
                               }
                             },
                             pageBuilder: (context, state) {
-                              final Map<String, InfoItem> params =
-                                  state.extra! as Map<String, InfoItem>;
+                              final Map<String, InfoItem> params = state.extra! as Map<String, InfoItem>;
                               final InfoItem info = params['info']!;
                               return MaterialPage(
                                   child: SignUpPage(info: info));
@@ -74,8 +87,7 @@ void main() {
                                 }
                               },
                               builder: (context, state) {
-                                final Map<String, InfoItem> params =
-                                    state.extra! as Map<String, InfoItem>;
+                                final Map<String, InfoItem> params = state.extra! as Map<String, InfoItem>;
                                 final InfoItem info = params['info']!;
                                 return NetSetPage(info: info);
                               })
@@ -88,7 +100,7 @@ void main() {
 
       return MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        title: "首页",
+        title: "文件管理",
         routerConfig: router,
       );
     },
@@ -131,7 +143,14 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void go() {
     UserOperateWeb.info().then((value) {
-      GoRouter.of(context).go("/signUp", extra: {"info": value});
+
+      if(value.hasInit){
+        GoRouter.of(context).go("/signIn", extra: {"info": value});
+      }else{
+        GoRouter.of(context).go("/signUp", extra: {"info": value});
+      }
+
+
     });
   }
 

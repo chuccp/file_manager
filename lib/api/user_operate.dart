@@ -46,6 +46,21 @@ class UserOperateWeb {
     return res;
   }
 
+  static Future<Response> signIn(
+      {required String username,
+        required String password}) async {
+    var url = "${root}signIn";
+    var postData = {
+      "username": username,
+      "password": password,
+    };
+    var response = await httpClient.post(url, data: jsonEncode(postData));
+    var data = response.data;
+    var res = Response.fromJson(data);
+    return res;
+  }
+
+
   static Future<Response> connect({required String address}) async {
     var url = "${root}connect?address=$address";
     var response = await httpClient.get(url);

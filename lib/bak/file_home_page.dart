@@ -41,8 +41,7 @@ class FilePageModel extends ChangeNotifier {
 
   bool get hasForward => index < _pathArrowItem.length;
 
-  UnmodifiableListView<FileItem> get fileItems =>
-      UnmodifiableListView(_fileItems);
+  UnmodifiableListView<FileItem> get fileItems => UnmodifiableListView(_fileItems);
 
   UnmodifiableListView<FocusNode> get focusNodes =>
       UnmodifiableListView(_focusNodes);
