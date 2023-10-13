@@ -1,11 +1,15 @@
 import 'dart:collection';
 
+import 'package:file_manager/component/ex_load.dart';
+import 'package:file_manager/file/file_setting.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
+import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
 
 import '../api/file_operate.dart';
+import '../component/ex_tree_tab.dart';
 import '../entry/file.dart';
 import 'file_list.dart';
 import 'file_operate.dart';
@@ -39,10 +43,10 @@ class FilePageDelegate extends ChangeNotifier {
 
   bool get hasForward => index < _pathArrowItem.length;
 
-  UnmodifiableListView<FileItem> get fileItems => UnmodifiableListView(_fileItems);
+  UnmodifiableListView<FileItem> get fileItems =>
+      UnmodifiableListView(_fileItems);
 
-  UnmodifiableListView<FocusNode> get focusNodes =>
-      UnmodifiableListView(_focusNodes);
+  UnmodifiableListView<FocusNode> get focusNodes => UnmodifiableListView(_focusNodes);
 
   int index = 0;
   final List<PathItem> _pathArrowItem = [];
@@ -81,20 +85,20 @@ class FilePageDelegate extends ChangeNotifier {
   }
 }
 
-
 void loadFileAsset(BuildContext context, String path, bool isArrow) {
   Provider.of<FilePageDelegate>(context, listen: false).disposeFocusNodes();
   FileOperate.listSync(path_: path).then((value) => {
-    Provider.of<FilePageDelegate>(context, listen: false).toPath(path, value, isArrow)
-  });
+        Provider.of<FilePageDelegate>(context, listen: false)
+            .toPath(path, value, isArrow)
+      });
 }
 
 void createFolder(BuildContext context, String folder) {
   var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
   FileOperate.createNewFolder(path: lastItem.path, folder: folder)
       .then((value) => {
-    if (value) {loadFileAsset(context, lastItem.path, false)}
-  });
+            if (value) {loadFileAsset(context, lastItem.path, false)}
+          });
 }
 
 void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
@@ -102,10 +106,9 @@ void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
   var path = lastItem.path;
   FileOperate.uploadNewFile(path: path, pickerResult: pickerResult)
       .then((value) => {
-    if (value) {loadFileAsset(context, lastItem.path, false)}
-  });
+            if (value) {loadFileAsset(context, lastItem.path, false)}
+          });
 }
-
 
 class FileManage extends StatelessWidget {
   const FileManage({super.key});
@@ -127,8 +130,13 @@ class FileDelegateManage extends StatefulWidget {
 }
 
 class _FileDelegateManageState extends State<FileDelegateManage> {
+  int _selectedTab = -1;
 
-
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedTab = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +147,7 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
         useDrawer: true,
         extendedNavigationRailWidth: 120,
         internalAnimations: false,
+        onSelectedIndexChange: (index) => {_onItemTapped(index)},
         destinations: const <NavigationDestination>[
           NavigationDestination(
             icon: Icon(Icons.inbox_outlined),
@@ -157,11 +166,32 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
           ),
         ],
         body: (_) {
-          return const FileShowPage();
+          if (_selectedTab == 2) {
+            return const FileSettingPage();
+          }
+          if (_selectedTab == 0) {
+            return const FileTreePage();
+          }
+          return const ExLoading();
         });
   }
+}
 
+class FileTreePage extends StatefulWidget {
+  const FileTreePage({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _FileTreePageState();
+}
+
+class _FileTreePageState extends State<FileTreePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: ExTreeTable(
+      body: (_, index) => const FileShowPage(),
+    ));
+  }
 }
 
 class FileShowPage extends StatelessWidget {
@@ -169,10 +199,9 @@ class FileShowPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
-      child: const Card(
-          child: Column(
+      child: const Column(
         children: [
           FileOperateView(),
           Divider(
@@ -190,7 +219,7 @@ class FileShowPage extends StatelessWidget {
           ),
           Expanded(child: FileListShowView()),
         ],
-      )),
+      ),
     );
   }
 }

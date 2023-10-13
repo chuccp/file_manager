@@ -1,3 +1,4 @@
+import 'package:file_manager/component/ex_load.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,9 @@ class _FileListShowViewState extends State<FileListShowView> {
   Widget build(BuildContext context) {
     var items = Provider.of<FilePageDelegate>(context).fileItems;
     var focusNodes = Provider.of<FilePageDelegate>(context).focusNodes;
+    if (items.isEmpty || focusNodes.isEmpty){
+      return const ExLoading();
+    }
     final List<Widget> children = <Widget>[
       for (int i = 0; i < items.length; i++)
         FileIconButton.fileItem(

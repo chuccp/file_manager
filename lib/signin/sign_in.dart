@@ -10,8 +10,8 @@ class SignInPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController usernameController = TextEditingController(text: "111111");
-    final TextEditingController passwordController = TextEditingController(text: "111111");
+    final TextEditingController usernameController = TextEditingController(text: "111");
+    final TextEditingController passwordController = TextEditingController(text: "111");
     return ExScaffold(
       title: "账号登录",
       body: ExCard(
