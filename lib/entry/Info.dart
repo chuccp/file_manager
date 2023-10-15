@@ -1,9 +1,11 @@
 import 'package:file_manager/entry/address.dart';
 
 class InfoItem {
-  InfoItem(this.hasInit, this.remoteAddress);
+  InfoItem(this.hasInit, this.remoteAddress, this.hasSignIn);
 
   final bool hasInit;
+
+  final bool hasSignIn;
 
   final List<String> remoteAddress;
 
@@ -18,6 +20,10 @@ class InfoItem {
     if (json.containsKey('hasInit')) {
       hasInit = json['hasInit'];
     }
+    bool hasSignIn=false;
+    if (json.containsKey('hasSignIn')) {
+      hasSignIn = json['hasSignIn'];
+    }
     List<String> remoteAddress = [];
     if (json.containsKey('remoteAddress')) {
       List<dynamic> list= json['remoteAddress'];
@@ -25,6 +31,6 @@ class InfoItem {
         remoteAddress.add(value as String);
       }
     }
-    return InfoItem(hasInit, remoteAddress);
+    return InfoItem(hasInit, remoteAddress,hasSignIn);
   }
 }

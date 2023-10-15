@@ -4,6 +4,7 @@ import '../api/user_operate.dart';
 import '../component/ex_card.dart';
 import '../component/ex_dialog.dart';
 import '../component/ex_scaffold.dart';
+import '../util/local_store.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -33,15 +34,18 @@ class SignInPage extends StatelessWidget {
                   UserOperateWeb.signIn(
                           username: usernameController.text,
                           password: passwordController.text)
-                      .then((value) => {
-                            if (value.isOK())
-                              {
-                                  GoRouter.of(context).go("/file")
-                              }
-                            else{
-                              {alertDialog(context: context, msg: value.data)}
-                            }
-                          });
+                      .then((value) {
+                    if (value.isOK()) {
+                      String token = value.data;
+                      LocalStore.saveToken(token: token).then((value) => {
+                        GoRouter.of(context).go("/file", extra: {"info": value})
+                      });
+                    } else {
+                      {
+                        alertDialog(context: context, msg: value.data);
+                      }
+                    }
+                  });
                   ;
                 },
               )

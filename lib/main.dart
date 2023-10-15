@@ -37,7 +37,7 @@ void main() {
                   GoRoute(
                     path: '/file',
                     builder: (context, state) {
-                      return const FileManage();
+                      return  const FileManage();
                     },
                   ),
                   StatefulShellRoute.indexedStack(
@@ -58,8 +58,7 @@ void main() {
                             pageBuilder: (context, state) {
                               final Map<String, InfoItem> params = state.extra! as Map<String, InfoItem>;
                               final InfoItem info = params['info']!;
-                              return MaterialPage(
-                                  child: SignUpPage(info: info));
+                              return MaterialPage(child: SignUpPage(info: info));
                             },
                           )
                         ]),
@@ -72,8 +71,7 @@ void main() {
                                 }
                               },
                               builder: (context, state) {
-                                final Map<String, InfoItem> params =
-                                    state.extra! as Map<String, InfoItem>;
+                                final Map<String, InfoItem> params = state.extra! as Map<String, InfoItem>;
                                 final InfoItem info = params['info']!;
                                 return CertPage(info: info);
                               })
@@ -143,9 +141,12 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void go() {
     UserOperateWeb.info().then((value) {
-
       if(value.hasInit){
-        GoRouter.of(context).go("/signIn", extra: {"info": value});
+        if(value.hasSignIn){
+          GoRouter.of(context).go("/file");
+        }else{
+          GoRouter.of(context).go("/signIn", extra: {"info": value});
+        }
       }else{
         GoRouter.of(context).go("/signUp", extra: {"info": value});
       }

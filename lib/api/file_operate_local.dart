@@ -20,7 +20,8 @@ class FileOperateLocal {
         path.relative(event.path, from: root),
         stat.type == io.FileSystemEntityType.directory,
         (stat.type == io.FileSystemEntityType.directory) ? 0 : stat.size,
-        stat.modified)));
+        stat.modified,
+        false)));
     return fList2.toList();
   }
 
@@ -39,7 +40,8 @@ class FileOperateLocal {
             (info.stat.type == io.FileSystemEntityType.directory)
                 ? 0
                 : info.stat.size,
-            info.stat.modified));
+            info.stat.modified,
+            false));
     return fList2.toList();
   }
 

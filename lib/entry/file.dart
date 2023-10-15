@@ -1,11 +1,11 @@
 import 'package:path/path.dart' as path2;
 
-
-
 class FileItem {
-  FileItem(this.name, this.path, this.isDir, this.size, this.modifyTime);
+  FileItem(this.name, this.path, this.isDir, this.size, this.modifyTime,
+      this.IsDisk);
 
   final bool isDir;
+  final bool IsDisk;
   final String name;
   final String path;
   final int size;
@@ -21,6 +21,12 @@ class FileItem {
     if (json.containsKey('isDir')) {
       isDir = json['isDir'];
     }
+
+    bool isDisk = false;
+    if (json.containsKey('isDisk')) {
+      isDisk = json['isDisk'];
+    }
+
     int size = 0;
     if (json.containsKey('size')) {
       size = json['size'];
@@ -29,8 +35,7 @@ class FileItem {
     if (json.containsKey('path')) {
       path = json['path'];
     }
-
-    return FileItem(json['name'], path, isDir, size, modify);
+    return FileItem(json['name'], path, isDir, size, modify, isDisk);
   }
 }
 
@@ -61,7 +66,5 @@ class PathItem {
 
 void main() {
   List<PathItem> pathItems = PathItem.splitPath("aaa/aaa/aaa");
-  for (var item in pathItems) {
-
-  }
+  for (var item in pathItems) {}
 }

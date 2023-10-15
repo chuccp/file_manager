@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../api/file_operate.dart';
 import '../component/ex_tree_tab.dart';
+import '../entry/Info.dart';
 import '../entry/file.dart';
 import 'file_list.dart';
 import 'file_operate.dart';
@@ -112,7 +113,6 @@ void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
 
 class FileManage extends StatelessWidget {
   const FileManage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -130,7 +130,7 @@ class FileDelegateManage extends StatefulWidget {
 }
 
 class _FileDelegateManageState extends State<FileDelegateManage> {
-  int _selectedTab = -1;
+  int _selectedTab = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -147,6 +147,7 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
         useDrawer: true,
         extendedNavigationRailWidth: 120,
         internalAnimations: false,
+        selectedIndex:_selectedTab,
         onSelectedIndexChange: (index) => {_onItemTapped(index)},
         destinations: const <NavigationDestination>[
           NavigationDestination(

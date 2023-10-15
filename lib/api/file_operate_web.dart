@@ -39,4 +39,20 @@ class FileOperateWeb {
         list.map((e) => FileItem.fromJson(e)).toList();
     return fileItemList;
   }
+
+
+  static Future<List<FileItem>> rootListSync({required String path_}) async {
+    var response = await httpClient.get("${root}root");
+    List<dynamic> list = response.data;
+    List<FileItem> fileItemList =
+    list.map((e) => FileItem.fromJson(e)).toList();
+    return fileItemList;
+  }
+  static Future<List<FileItem>> pathListSync({required String path_}) async {
+    var response = await httpClient.get("${root}paths", queryParameters: {"Path": path_});
+    List<dynamic> list = response.data;
+    List<FileItem> fileItemList =
+    list.map((e) => FileItem.fromJson(e)).toList();
+    return fileItemList;
+  }
 }
