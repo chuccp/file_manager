@@ -41,7 +41,7 @@ class FileOperateWeb {
   }
 
 
-  static Future<List<FileItem>> rootListSync({required String path_}) async {
+  static Future<List<FileItem>> rootListSync() async {
     var response = await httpClient.get("${root}root");
     List<dynamic> list = response.data;
     List<FileItem> fileItemList =

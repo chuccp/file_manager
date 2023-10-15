@@ -2,10 +2,10 @@ import 'package:path/path.dart' as path2;
 
 class FileItem {
   FileItem(this.name, this.path, this.isDir, this.size, this.modifyTime,
-      this.IsDisk);
+      this.isDisk);
 
   final bool isDir;
-  final bool IsDisk;
+  final bool isDisk;
   final String name;
   final String path;
   final int size;
