@@ -42,7 +42,7 @@ class _SelectPageState extends State<SelectPage> {
     return FutureBuilder<InfoItem>(
       future: futureAlbum,
       builder: (BuildContext context, AsyncSnapshot<InfoItem> snapshot) {
-        if (snapshot.hasData && snapshot.data!.hasInit) {
+        if (snapshot.hasData && snapshot.data!.hasInit!) {
           return const HomePage(title: "主页");
         }
         return const SettingPage(title: "设置页面");

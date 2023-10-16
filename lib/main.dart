@@ -141,8 +141,8 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void go() {
     UserOperateWeb.info().then((value) {
-      if(value.hasInit){
-        if(value.hasSignIn){
+      if(value.hasInit!){
+        if(value.hasSignIn!){
           GoRouter.of(context).go("/file");
         }else{
           GoRouter.of(context).go("/signIn", extra: {"info": value});

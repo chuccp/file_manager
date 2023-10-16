@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:download/download.dart';
+import 'package:file_manager/entry/page.dart';
+import 'package:file_manager/entry/path.dart';
 import 'package:file_manager/util/download.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,7 +44,8 @@ class UserOperateWeb {
       "isNatClient": isNatClient,
       "isNatServer": isNatServer
     };
-    var response = await httpClient.post(url, data: jsonEncode(postData), options: await getOptions());
+    var response = await httpClient.post(url,
+        data: jsonEncode(postData), options: await getOptions());
     var data = response.data;
     var res = Response.fromJson(data);
     return res;
@@ -55,7 +58,8 @@ class UserOperateWeb {
       "username": username,
       "password": password,
     };
-    var response = await httpClient.post(url, data: jsonEncode(postData), options: await getOptions());
+    var response = await httpClient.post(url,
+        data: jsonEncode(postData), options: await getOptions());
     var data = response.data;
     var res = Response.fromJson(data);
     return res;
@@ -69,10 +73,34 @@ class UserOperateWeb {
     return res;
   }
 
+  static Future<Response> addPath(
+      {required String name, required String path}) async {
+    var url = "${root}addPath";
+    var postData = {
+      "name": name,
+      "path": path,
+    };
+    var response = await httpClient.post(url,
+        data: jsonEncode(postData), options: await getOptions());
+    var data = response.data;
+    var res = Response.fromJson(data);
+    return res;
+  }
+
+  static Future<Response<ExPage<ExPath>>> queryPath(
+      {required int pageNo, required int pageSize}) async {
+    var url = "${root}queryPath?pageNo=$pageNo&pageSize=$pageSize";
+    var response = await httpClient.get(url, options: await getOptions());
+    var data = response.data;
+    var res = Response.fromJsonToPathPage(data);
+    return res;
+  }
+
   static Future<Response> addRemoteAddress(
       {required List<String> address}) async {
     var url = "${root}addRemoteAddress";
-    var response = await httpClient.post(url, data: jsonEncode(address), options: await getOptions());
+    var response = await httpClient.post(url,
+        data: jsonEncode(address), options: await getOptions());
     var data = response.data;
     var res = Response.fromJson(data);
     return res;

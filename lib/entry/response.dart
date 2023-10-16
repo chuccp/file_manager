@@ -1,22 +1,26 @@
-class Response {
-  Response(this.code, this.data);
+import 'package:file_manager/entry/page.dart';
+import 'package:file_manager/entry/path.dart';
+import 'package:file_manager/util/json.dart';
 
-  final int code;
-  final dynamic data;
+class Response<T> {
+  Response({this.code, this.data});
 
-  bool isOK(){
+  int? code;
+  T? data;
+
+  bool isOK() {
     return code == 200;
   }
 
   factory Response.fromJson(Map<String, dynamic> json) {
-    int code = 0;
-    dynamic data;
-    if (json.containsKey('code')) {
-      code = json['code'];
-    }
-    if (json.containsKey('data')) {
-      data = json['data'];
-    }
-    return Response(code, data);
+    return Response(
+        code: Json.getInt(json, "code"), data: Json.getDynamic(json, "data"));
+  }
+
+  static Response<ExPage<ExPath>> fromJsonToPathPage(Map<String, dynamic> json) {
+    var page = Response<ExPage<ExPath>>();
+    page.code = Json.getInt(json, "code");
+    page.data = ExPage.fromPathJson(Json.getDynamic(json, "data"));
+    return page;
   }
 }

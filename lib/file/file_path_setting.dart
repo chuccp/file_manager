@@ -1,9 +1,12 @@
+import 'package:file_manager/api/user_operate.dart';
 import 'package:file_manager/component/ex_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../api/file_operate_web.dart';
 import '../component/ex_card.dart';
 import '../component/ex_tree_file.dart';
+import '../entry/page.dart';
+import '../entry/path.dart';
 
 class FilePathSetting extends StatefulWidget {
   const FilePathSetting({super.key});
@@ -13,17 +16,58 @@ class FilePathSetting extends StatefulWidget {
 }
 
 class SourceData extends DataTableSource {
+  final _pathList = <ExPath>[];
+
   int _selectedRow = 0;
+
+  int _rowCount = 0;
+
+  final int _pageSize = 10;
+
+  int _pageNo = 1;
+
+  void updateSourceData(ExPage<ExPath> page, int pageNo) {
+    _pathList.clear();
+    _rowCount = page.total!;
+    for (var value in page.list!) {
+      _pathList.add(value);
+    }
+    _pageNo = pageNo;
+    notifyListeners();
+  }
 
   @override
   DataRow? getRow(int index) {
+    int pageNo = (index ) ~/ _pageSize+1;
+    if (pageNo != _pageNo) {
+      if ((index % 10 == 9)|| index==(_rowCount-1)) {
+        if(pageNo>_pageNo){
+          UserOperateWeb.queryPath(pageNo: _pageNo, pageSize: 10).then((value) {
+            updateSourceData(value.data!, _pageNo + 1);
+          });
+        }else{
+          UserOperateWeb.queryPath(pageNo: _pageNo-2, pageSize: 10).then((value) {
+            updateSourceData(value.data!, _pageNo - 1);
+          });
+        }
+      }
+      return const DataRow(
+        cells: <DataCell>[DataCell(Text("")), DataCell(Text(""))],
+      );
+    }
+    index = index%10;
+    var path = _pathList[index];
+    var cells = <DataCell>[
+      DataCell(Text(path.name!)),
+      DataCell(Text(path.path!))
+    ];
     return DataRow(
       onSelectChanged: (bool? value) {
         _selectedRow = index;
         notifyListeners();
       },
       selected: _selectedRow == index,
-      cells: const <DataCell>[DataCell(Text('Sarah')), DataCell(Text('19'))],
+      cells: cells,
     );
   }
 
@@ -31,17 +75,27 @@ class SourceData extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => 5;
+  int get rowCount => _rowCount;
 
   @override
   int get selectedRowCount => 1;
 }
 
 class _FilePathSettingState extends State<FilePathSetting> {
-  final DataTableSource _sourceData = SourceData();
+  final SourceData _sourceData = SourceData();
+
+  @override
+  void initState() {
+    UserOperateWeb.queryPath(pageNo: 0, pageSize: 10).then((value) {
+      _sourceData.updateSourceData(value.data!, 1);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController nameController = TextEditingController();
+    TextEditingController pathController = TextEditingController();
+
     return ListView(
       children: [
         Container(
@@ -61,9 +115,21 @@ class _FilePathSettingState extends State<FilePathSetting> {
                           onPressed: () {
                             exShowDialog(
                                 context: context,
-                                content: _AddPathView(),
+                                content: _AddPathView(
+                                  nameController: nameController,
+                                  pathController: pathController,
+                                ),
                                 onPressed: () {
-                                  return Future(() => true);
+                                  return UserOperateWeb.addPath(
+                                          name: nameController.text,
+                                          path: pathController.text)
+                                      .then((value) {
+                                    if (value.isOK()) {
+                                      return true;
+                                    } else {
+                                      return false;
+                                    }
+                                  });
                                 });
                           },
                         ),
@@ -112,22 +178,25 @@ class _FilePathSettingState extends State<FilePathSetting> {
     );
   }
 }
-class _AddPathView extends StatefulWidget{
+
+class _AddPathView extends StatefulWidget {
+  const _AddPathView(
+      {required this.nameController, required this.pathController});
+
+  final TextEditingController nameController;
+
+  final TextEditingController pathController;
+
   @override
-  State<StatefulWidget> createState() =>_AddPathViewState();
-
+  State<StatefulWidget> createState() => _AddPathViewState();
 }
+
 class _AddPathViewState extends State<_AddPathView> {
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController pathController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-
     return SizedBox(
       height: 500,
-      width: 300,
+      width: 400,
       child: Column(
         children: <Widget>[
           const Text(
@@ -136,15 +205,15 @@ class _AddPathViewState extends State<_AddPathView> {
           ),
           TextField(
             autofocus: true,
-            controller: nameController,
+            controller: widget.nameController,
             decoration: const InputDecoration(
               labelText: "别名",
               hintText: "别名",
             ),
           ),
           TextField(
-            readOnly:true,
-            controller: pathController,
+            readOnly: true,
+            controller: widget.pathController,
             decoration:
                 const InputDecoration(labelText: "远程目录", hintText: "从下面选择路径"),
           ),
@@ -156,7 +225,7 @@ class _AddPathViewState extends State<_AddPathView> {
               return FileOperateWeb.pathListSync(path_: key);
             },
             onChanged: (String value) {
-              pathController.text = value;
+              widget.pathController.text = value;
             },
           )
         ],
