@@ -28,7 +28,7 @@ class FileSettingPage extends StatelessWidget {
     return Card(
         child: ExTreeTable(
       nodes: nodes,
-      selectedKey: "user",
+      selectedKey: "path",
       body: (_, key) {
         if (key == "path") {
           return const FilePathSetting();

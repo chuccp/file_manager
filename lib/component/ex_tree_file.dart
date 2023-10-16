@@ -8,11 +8,13 @@ typedef RootFileItemCall = Future<List<FileItem>> Function();
 typedef PathFileItemCall = Future<List<FileItem>> Function(String key);
 
 class ExTreeFile extends StatefulWidget {
-  const ExTreeFile({super.key, this.root, this.path});
+  const ExTreeFile({super.key, this.root, this.path, required this.onChanged});
 
   final RootFileItemCall? root;
 
   final PathFileItemCall? path;
+
+  final ValueChanged<String> onChanged;
 
   @override
   State<StatefulWidget> createState() => _ExTreeFileState();
@@ -53,12 +55,12 @@ class _ExTreeFileState extends State<ExTreeFile> {
     setState(() {
       this.selectKey = selectKey;
     });
+    widget.onChanged(selectKey);
   }
 
   @override
   Widget build(BuildContext context) {
     var list = <Widget>[
-       ListTile(title:Text(selectKey)),
       Expanded(
           child: TreeView(
               onExpansionChanged: (key, isOpen) {
@@ -96,10 +98,10 @@ class _ExTreeFileState extends State<ExTreeFile> {
                 );
               }))
     ];
-    return Column(
+    return Expanded(child: Column(
       crossAxisAlignment:CrossAxisAlignment.start,
       children: list,
-    );
+    )) ;
   }
 }
 
