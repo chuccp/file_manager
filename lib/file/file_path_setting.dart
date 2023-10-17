@@ -36,6 +36,13 @@ class SourceData extends DataTableSource {
     notifyListeners();
   }
 
+
+  void refresh(){
+    UserOperateWeb.queryPath(pageNo: _pageNo-1, pageSize: 10).then((value) {
+      updateSourceData(value.data!, _pageNo);
+    });
+  }
+
   @override
   DataRow? getRow(int index) {
     int pageNo = (index ) ~/ _pageSize+1;
@@ -86,9 +93,7 @@ class _FilePathSettingState extends State<FilePathSetting> {
 
   @override
   void initState() {
-    UserOperateWeb.queryPath(pageNo: 0, pageSize: 10).then((value) {
-      _sourceData.updateSourceData(value.data!, 1);
-    });
+    _sourceData.refresh();
   }
 
   @override
@@ -125,6 +130,7 @@ class _FilePathSettingState extends State<FilePathSetting> {
                                           path: pathController.text)
                                       .then((value) {
                                     if (value.isOK()) {
+                                      _sourceData.refresh();
                                       return true;
                                     } else {
                                       return false;

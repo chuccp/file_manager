@@ -19,6 +19,8 @@ class FilePageModel extends ChangeNotifier {
 
   final List<FocusNode> _focusNodes = [];
 
+  String _rootPath = "";
+
   UnmodifiableListView<PathItem> get items => UnmodifiableListView(_pathItem);
 
   PathItem get lastItem => _pathItem[_pathItem.length - 1];
@@ -39,12 +41,13 @@ class FilePageModel extends ChangeNotifier {
 
   bool get hasBack => index > 1;
 
+  String get rootPath => _rootPath;
+
   bool get hasForward => index < _pathArrowItem.length;
 
   UnmodifiableListView<FileItem> get fileItems => UnmodifiableListView(_fileItems);
 
-  UnmodifiableListView<FocusNode> get focusNodes =>
-      UnmodifiableListView(_focusNodes);
+  UnmodifiableListView<FocusNode> get focusNodes => UnmodifiableListView(_focusNodes);
 
   int index = 0;
   final List<PathItem> _pathArrowItem = [];
@@ -66,7 +69,8 @@ class FilePageModel extends ChangeNotifier {
     }
   }
 
-  void toPath(String path, List<FileItem> fileItems, bool isArrow) {
+  void toPath({required String rootPath,required String path, required List<FileItem> fileItems, required bool isArrow}) {
+    _rootPath = rootPath;
     _focusNodes.addAll([for (var _ in fileItems) FocusNode()]);
     _pathItem.clear();
     _pathItem.addAll(PathItem.splitPath(path));
@@ -99,9 +103,10 @@ class FileHomePage extends StatelessWidget {
 
 void loadFileAsset(BuildContext context, String path, bool isArrow) {
   Provider.of<FilePageModel>(context, listen: false).disposeFocusNodes();
-  FileOperate.listSync(path_: path).then((value) => {
+  var rootPath = Provider.of<FilePageModel>(context, listen: false).rootPath;
+  FileOperate.listSync(path_: path, rootPath: rootPath).then((value) => {
         Provider.of<FilePageModel>(context, listen: false)
-            .toPath(path, value, isArrow)
+            .toPath(rootPath:rootPath,path:path, fileItems:value, isArrow:isArrow)
       });
 }
 
@@ -116,7 +121,8 @@ void createFolder(BuildContext context, String folder) {
 void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
   var lastItem = Provider.of<FilePageModel>(context, listen: false).lastItem;
   var path = lastItem.path;
-  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult)
+  var rootPath = Provider.of<FilePageModel>(context, listen: false).rootPath;
+  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult, rootPath: rootPath)
       .then((value) => {
             if (value) {loadFileAsset(context, lastItem.path, false)}
           });

@@ -7,7 +7,9 @@ import '../entry/file.dart';
 import 'file_mange.dart';
 
 class FilePathView extends StatefulWidget {
-  const FilePathView({super.key});
+  const FilePathView({super.key, required this.rootPath});
+
+  final String rootPath;
 
   @override
   State<StatefulWidget> createState() => _FilePathViewState();
@@ -35,10 +37,8 @@ class _FilePathViewState extends State<FilePathView> {
           onPressed: !hasBack
               ? null
               : () {
-            PathItem pathItem =
-                Provider.of<FilePageDelegate>(context, listen: false)
-                    .backItems;
-            loadFileAsset(context, pathItem.path, true);
+            PathItem pathItem = Provider.of<FilePageDelegate>(context, listen: false).backItems;
+            loadFileAsset(context:context,rootPath:widget.rootPath, path:pathItem.path, isArrow:true);
           },
         ),
         SizedBox(
@@ -54,9 +54,8 @@ class _FilePathViewState extends State<FilePathView> {
                   ? null
                   : () {
                 PathItem pathItem =
-                    Provider.of<FilePageDelegate>(context, listen: false)
-                        .forwardItems;
-                loadFileAsset(context, pathItem.path, true);
+                    Provider.of<FilePageDelegate>(context, listen: false).forwardItems;
+                loadFileAsset(context:context,rootPath:widget.rootPath,  path:pathItem.path, isArrow:true);
               },
             )),
         Row(

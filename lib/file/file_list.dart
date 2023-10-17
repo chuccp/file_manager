@@ -8,7 +8,9 @@ import '../component/file_icon_button.dart';
 import 'file_mange.dart';
 
 class FileListShowView extends StatefulWidget {
-  const FileListShowView({super.key});
+   FileListShowView({super.key, required this.rootPath});
+
+   String rootPath;
 
   @override
   State<StatefulWidget> createState() => _FileListShowViewState();
@@ -16,10 +18,6 @@ class FileListShowView extends StatefulWidget {
 
 class _FileListShowViewState extends State<FileListShowView> {
 
-  @override
-  void initState() {
-    loadFileAsset(context, "/", false);
-  }
 
 
   @override
@@ -37,7 +35,7 @@ class _FileListShowViewState extends State<FileListShowView> {
           onPressed: () => {focusNodes.elementAt(i).requestFocus()},
           onDoubleTap: () {
             if (items[i].isDir) {
-              loadFileAsset(context, items[i].path, false);
+              loadFileAsset(context:context, rootPath:widget.rootPath, path:items[i].path, isArrow:false);
             } else {
               Future.delayed(const Duration(milliseconds: 100)).then((value) {
                 FilePicker.platform.saveFile(fileName: items[i].name).then((value) {

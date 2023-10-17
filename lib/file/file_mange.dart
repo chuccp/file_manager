@@ -9,6 +9,7 @@ import 'package:flutter_treeview/flutter_treeview.dart';
 import 'package:provider/provider.dart';
 
 import '../api/file_operate.dart';
+import '../api/user_operate.dart';
 import '../component/ex_tree_tab.dart';
 import '../entry/Info.dart';
 import '../entry/file.dart';
@@ -47,7 +48,8 @@ class FilePageDelegate extends ChangeNotifier {
   UnmodifiableListView<FileItem> get fileItems =>
       UnmodifiableListView(_fileItems);
 
-  UnmodifiableListView<FocusNode> get focusNodes => UnmodifiableListView(_focusNodes);
+  UnmodifiableListView<FocusNode> get focusNodes =>
+      UnmodifiableListView(_focusNodes);
 
   int index = 0;
   final List<PathItem> _pathArrowItem = [];
@@ -86,33 +88,34 @@ class FilePageDelegate extends ChangeNotifier {
   }
 }
 
-void loadFileAsset(BuildContext context, String path, bool isArrow) {
+void loadFileAsset({required BuildContext context,required String rootPath, required String path, required bool isArrow}) {
   Provider.of<FilePageDelegate>(context, listen: false).disposeFocusNodes();
-  FileOperate.listSync(path_: path).then((value) => {
+  FileOperate.listSync(path_: path, rootPath: rootPath).then((value) => {
         Provider.of<FilePageDelegate>(context, listen: false)
             .toPath(path, value, isArrow)
       });
 }
 
-void createFolder(BuildContext context, String folder) {
+void createFolder({required BuildContext context,required String rootPath, required String folder}) {
   var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
   FileOperate.createNewFolder(path: lastItem.path, folder: folder)
       .then((value) => {
-            if (value) {loadFileAsset(context, lastItem.path, false)}
+            if (value) {loadFileAsset(context:context,rootPath:rootPath, path:lastItem.path, isArrow:false)}
           });
 }
 
-void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
+void uploadFile(BuildContext context,String rootPath, FilePickerResult? pickerResult) {
   var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
   var path = lastItem.path;
-  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult)
+  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult, rootPath: rootPath)
       .then((value) => {
-            if (value) {loadFileAsset(context, lastItem.path, false)}
+            if (value) {loadFileAsset(context:context,rootPath:rootPath, path:lastItem.path, isArrow:false)}
           });
 }
 
 class FileManage extends StatelessWidget {
   const FileManage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -130,7 +133,7 @@ class FileDelegateManage extends StatefulWidget {
 }
 
 class _FileDelegateManageState extends State<FileDelegateManage> {
-  int _selectedTab = 2;
+  int _selectedTab = 0;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -147,7 +150,7 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
         useDrawer: true,
         extendedNavigationRailWidth: 120,
         internalAnimations: false,
-        selectedIndex:_selectedTab,
+        selectedIndex: _selectedTab,
         onSelectedIndexChange: (index) => {_onItemTapped(index)},
         destinations: const <NavigationDestination>[
           NavigationDestination(
@@ -186,39 +189,88 @@ class FileTreePage extends StatefulWidget {
 }
 
 class _FileTreePageState extends State<FileTreePage> {
+  List<Node> nodes = [];
+
+  String selectedKey = "";
+
+  _updateNode(List<Node> nodes) {
+    setState(() {
+      this.nodes.clear();
+      this.nodes.addAll(nodes);
+      selectedKey = nodes[0].key;
+    });
+  }
+
+  @override
+  void initState() {
+    UserOperateWeb.queryAllPath().then((value) => {
+          _updateNode(<Node>[
+            for (var v in value.data!.list!)
+              Node(
+                label: v.name!,
+                key: v.path!,
+                icon: Icons.folder,
+                expanded: false,
+              )
+          ])
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ExTreeTable(
-      body: (_, index) => const FileShowPage(),
+      selectedKey: selectedKey,
+      nodes: nodes,
+      body: (_, index) {
+        if (index == "") {
+          return const ExLoading();
+        }
+        print(index);
+        return FileShowPage(
+          rootPath: index,
+        );
+      },
     ));
   }
 }
 
-class FileShowPage extends StatelessWidget {
-  const FileShowPage({super.key});
+class FileShowPage extends StatefulWidget {
+  const FileShowPage({super.key, required this.rootPath});
+
+  final String rootPath;
 
   @override
+  State<StatefulWidget> createState()=>_FileShowPageState();
+
+
+}
+class _FileShowPageState extends State<FileShowPage>{
+  @override
   Widget build(BuildContext context) {
+    // print("rootPath ${widget.rootPath}");
+
+    loadFileAsset(context:context,rootPath:widget.rootPath, path: "/", isArrow:false);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
-      child: const Column(
+      child:  Column(
         children: [
-          FileOperateView(),
-          Divider(
+          const FileOperateView(),
+          const Divider(
             height: 0,
             indent: 0,
             endIndent: 0,
             color: Colors.black12,
           ),
-          FilePathView(),
-          Divider(
+          FilePathView(rootPath: widget.rootPath,),
+          const Divider(
             height: 0,
             indent: 0,
             endIndent: 0,
             color: Colors.black12,
           ),
-          Expanded(child: FileListShowView()),
+          Expanded(child: FileListShowView(rootPath: widget.rootPath,)),
         ],
       ),
     );

@@ -11,13 +11,14 @@ class FileOperateWeb {
 
 
   static Future<bool> uploadNewFile(
-      {required String path_,
+      {required String rootPath,required String path_,
       required FilePickerResult? pickerResult,
       dio.ProgressCallback? progressCallback}) async {
     PlatformFile? platformFile = pickerResult?.files.first;
     if (platformFile != null ) {
       final formData = dio.FormData.fromMap({
         'Path': path_,
+        "RootPath":rootPath,
         'file': dio.MultipartFile.fromStream(
             () =>platformFile.readStream!, platformFile.size,
             filename: platformFile.name)
@@ -32,8 +33,8 @@ class FileOperateWeb {
 
   static final httpClient = dio.Dio();
 
-  static Future<List<FileItem>> listSync({required String path_}) async {
-    var response = await httpClient.get("${root}files", queryParameters: {"Path": path_});
+  static Future<List<FileItem>> listSync({required String rootPath,required String path_}) async {
+    var response = await httpClient.get("${root}files", queryParameters: {"Path": path_,"RootPath":rootPath});
     List<dynamic> list = response.data;
     List<FileItem> fileItemList =
         list.map((e) => FileItem.fromJson(e)).toList();

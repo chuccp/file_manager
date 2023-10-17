@@ -10,9 +10,9 @@ import '../util/platform.dart' as platform;
 class FileOperate {
 
 
-  static Future<List<FileItem>> listSync({required String path_}) {
+  static Future<List<FileItem>> listSync({required String rootPath,required String path_}) {
     if (platform.isWeb) {
-      return FileOperateWeb.listSync(path_: path_);
+      return FileOperateWeb.listSync(path_: path_, rootPath: rootPath);
     }
     return FileOperateLocal.listSync(path_: path_);
   }
@@ -24,10 +24,10 @@ class FileOperate {
 
 
 
-  static Future<bool> uploadNewFile({required String path, required FilePickerResult? pickerResult, ProgressCallback? progressCallback}) {
+  static Future<bool> uploadNewFile({required String rootPath,required String path, required FilePickerResult? pickerResult, ProgressCallback? progressCallback}) {
     if(platform.isWeb){
       print("===============");
-      return FileOperateWeb.uploadNewFile(path_: path, pickerResult: pickerResult);
+      return FileOperateWeb.uploadNewFile(path_: path, pickerResult: pickerResult, rootPath:rootPath);
     }
     File file = File(pickerResult!.files.single.path!!);
     return FileOperateLocal.uploadNewFile(path_: path, file: file);

@@ -96,6 +96,16 @@ class UserOperateWeb {
     return res;
   }
 
+
+  static Future<Response<ExPage<ExPath>>> queryAllPath() async {
+    var url = "${root}queryAllPath";
+    var response = await httpClient.get(url, options: await getOptions());
+    var data = response.data;
+    var res = Response.fromJsonToPathPage(data);
+    return res;
+  }
+
+
   static Future<Response> addRemoteAddress(
       {required List<String> address}) async {
     var url = "${root}addRemoteAddress";
