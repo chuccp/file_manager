@@ -1,7 +1,9 @@
 import 'dart:collection';
 
+import 'package:file_manager/bak/file_transfer_page.dart';
 import 'package:file_manager/component/ex_load.dart';
 import 'package:file_manager/file/file_setting.dart';
+import 'package:file_manager/file/file_transfer_view.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
@@ -133,8 +135,7 @@ class FileDelegateManage extends StatefulWidget {
 }
 
 class _FileDelegateManageState extends State<FileDelegateManage> {
-  int _selectedTab = 0;
-
+  int _selectedTab = 1;
   void _onItemTapped(int index) {
     setState(() {
       _selectedTab = index;
@@ -172,9 +173,10 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
         body: (_) {
           if (_selectedTab == 2) {
             return const FileSettingPage();
-          }
-          if (_selectedTab == 0) {
+          }else if (_selectedTab == 0) {
             return const FileTreePage();
+          }else if (_selectedTab == 1) {
+            return const FileTransferView();
           }
           return const ExLoading();
         });
