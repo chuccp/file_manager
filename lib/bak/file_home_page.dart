@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../component/file_icon_button.dart';
 import '../entry/file.dart';
+import '../entry/progress.dart';
 
 
 
@@ -18,6 +19,9 @@ class FilePageModel extends ChangeNotifier {
   final List<FileItem> _fileItems = [];
 
   final List<FocusNode> _focusNodes = [];
+
+
+  final Map<int,Process> _progresses =  <int,Process>{};
 
   String _rootPath = "";
 
@@ -46,6 +50,8 @@ class FilePageModel extends ChangeNotifier {
   bool get hasForward => index < _pathArrowItem.length;
 
   UnmodifiableListView<FileItem> get fileItems => UnmodifiableListView(_fileItems);
+
+  UnmodifiableListView<Progress> get progresses => UnmodifiableListView(_progresses.values as Iterable<Progress>);
 
   UnmodifiableListView<FocusNode> get focusNodes => UnmodifiableListView(_focusNodes);
 
@@ -122,7 +128,7 @@ void uploadFile(BuildContext context, FilePickerResult? pickerResult) {
   var lastItem = Provider.of<FilePageModel>(context, listen: false).lastItem;
   var path = lastItem.path;
   var rootPath = Provider.of<FilePageModel>(context, listen: false).rootPath;
-  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult, rootPath: rootPath)
+  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult, rootPath: rootPath, progressCallback: (int count, int total) {  })
       .then((value) => {
             if (value) {loadFileAsset(context, lastItem.path, false)}
           });

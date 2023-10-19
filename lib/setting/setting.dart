@@ -6,7 +6,7 @@ import '../api/user_operate.dart';
 import '../component/ex_address_input.dart';
 import '../component/ex_dialog.dart';
 import '../component/ex_scaffold.dart';
-import '../entry/Info.dart';
+import '../entry/info.dart';
 
 class SettingPage extends StatelessWidget {
   const SettingPage({super.key, required this.navigationShell});

@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import '../component/ex_dialog.dart';
-import '../entry/Info.dart';
+import '../entry/info.dart';
 import '../entry/file.dart';
 import 'package:dio/dio.dart' as dio;
 

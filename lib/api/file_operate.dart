@@ -24,10 +24,9 @@ class FileOperate {
 
 
 
-  static Future<bool> uploadNewFile({required String rootPath,required String path, required FilePickerResult? pickerResult, ProgressCallback? progressCallback}) {
+  static Future<bool> uploadNewFile({required String rootPath,required String path, required FilePickerResult? pickerResult, required ProgressCallback progressCallback}) {
     if(platform.isWeb){
-      print("===============");
-      return FileOperateWeb.uploadNewFile(path_: path, pickerResult: pickerResult, rootPath:rootPath);
+      return FileOperateWeb.uploadNewFile(path_: path, pickerResult: pickerResult, rootPath:rootPath,progressCallback:progressCallback);
     }
     File file = File(pickerResult!.files.single.path!!);
     return FileOperateLocal.uploadNewFile(path_: path, file: file);

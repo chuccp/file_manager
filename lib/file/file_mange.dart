@@ -13,15 +13,19 @@ import 'package:provider/provider.dart';
 import '../api/file_operate.dart';
 import '../api/user_operate.dart';
 import '../component/ex_tree_tab.dart';
-import '../entry/Info.dart';
+import '../entry/info.dart';
 import '../entry/file.dart';
+import '../entry/progress.dart';
 import 'file_list.dart';
 import 'file_operate.dart';
 import 'file_path_view.dart';
+import '../entry/progress.dart';
 
 class FilePageDelegate extends ChangeNotifier {
   final List<PathItem> _pathItem = [];
   final List<FileItem> _fileItems = [];
+
+  final Map<String, Progress> _progresses = <String, Progress>{};
 
   final List<FocusNode> _focusNodes = [];
 
@@ -53,6 +57,18 @@ class FilePageDelegate extends ChangeNotifier {
   UnmodifiableListView<FocusNode> get focusNodes =>
       UnmodifiableListView(_focusNodes);
 
+  UnmodifiableListView<Progress> get progresses =>
+      UnmodifiableListView(_progresses.values);
+
+  void updateProgresses(Progress progress) {
+    if (_progresses.containsKey(progress.id)) {
+      _progresses[progress.id]!.count = progress.count;
+    } else {
+      _progresses[progress.id!] = progress;
+    }
+    notifyListeners();
+  }
+
   int index = 0;
   final List<PathItem> _pathArrowItem = [];
 
@@ -73,7 +89,16 @@ class FilePageDelegate extends ChangeNotifier {
     }
   }
 
-  void toPath(String path, List<FileItem> fileItems, bool isArrow) {
+  String _rootPath = "";
+
+  String get rootPath => _rootPath;
+
+  void toPath(
+      {required String path,
+      required List<FileItem> fileItems,
+      required bool isArrow,
+      required String rootPath}) {
+    _rootPath = rootPath;
     _focusNodes.addAll([for (var _ in fileItems) FocusNode()]);
     _pathItem.clear();
     _pathItem.addAll(PathItem.splitPath(path));
@@ -90,28 +115,33 @@ class FilePageDelegate extends ChangeNotifier {
   }
 }
 
-void loadFileAsset({required BuildContext context,required String rootPath, required String path, required bool isArrow}) {
+void loadFileAsset(
+    {required BuildContext context,
+    required String rootPath,
+    required String path,
+    required bool isArrow}) {
   Provider.of<FilePageDelegate>(context, listen: false).disposeFocusNodes();
   FileOperate.listSync(path_: path, rootPath: rootPath).then((value) => {
-        Provider.of<FilePageDelegate>(context, listen: false)
-            .toPath(path, value, isArrow)
+        Provider.of<FilePageDelegate>(context, listen: false).toPath(
+            path: path, fileItems: value, isArrow: isArrow, rootPath: rootPath)
       });
 }
 
-void createFolder({required BuildContext context,required String rootPath, required String folder}) {
+void createFolder(
+    {required BuildContext context,
+    required String rootPath,
+    required String folder}) {
   var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
   FileOperate.createNewFolder(path: lastItem.path, folder: folder)
       .then((value) => {
-            if (value) {loadFileAsset(context:context,rootPath:rootPath, path:lastItem.path, isArrow:false)}
-          });
-}
-
-void uploadFile(BuildContext context,String rootPath, FilePickerResult? pickerResult) {
-  var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
-  var path = lastItem.path;
-  FileOperate.uploadNewFile(path: path, pickerResult: pickerResult, rootPath: rootPath)
-      .then((value) => {
-            if (value) {loadFileAsset(context:context,rootPath:rootPath, path:lastItem.path, isArrow:false)}
+            if (value)
+              {
+                loadFileAsset(
+                    context: context,
+                    rootPath: rootPath,
+                    path: lastItem.path,
+                    isArrow: false)
+              }
           });
 }
 
@@ -135,7 +165,8 @@ class FileDelegateManage extends StatefulWidget {
 }
 
 class _FileDelegateManageState extends State<FileDelegateManage> {
-  int _selectedTab = 1;
+  int _selectedTab = 0;
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedTab = index;
@@ -173,9 +204,9 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
         body: (_) {
           if (_selectedTab == 2) {
             return const FileSettingPage();
-          }else if (_selectedTab == 0) {
+          } else if (_selectedTab == 0) {
             return const FileTreePage();
-          }else if (_selectedTab == 1) {
+          } else if (_selectedTab == 1) {
             return const FileTransferView();
           }
           return const ExLoading();
@@ -228,7 +259,6 @@ class _FileTreePageState extends State<FileTreePage> {
         if (index == "") {
           return const ExLoading();
         }
-        print(index);
         return FileShowPage(
           rootPath: index,
         );
@@ -243,20 +273,20 @@ class FileShowPage extends StatefulWidget {
   final String rootPath;
 
   @override
-  State<StatefulWidget> createState()=>_FileShowPageState();
-
-
+  State<StatefulWidget> createState() => _FileShowPageState();
 }
-class _FileShowPageState extends State<FileShowPage>{
+
+class _FileShowPageState extends State<FileShowPage> {
   @override
   Widget build(BuildContext context) {
     // print("rootPath ${widget.rootPath}");
 
-    loadFileAsset(context:context,rootPath:widget.rootPath, path: "/", isArrow:false);
+    loadFileAsset(
+        context: context, rootPath: widget.rootPath, path: "/", isArrow: false);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
-      child:  Column(
+      child: Column(
         children: [
           const FileOperateView(),
           const Divider(
@@ -265,14 +295,19 @@ class _FileShowPageState extends State<FileShowPage>{
             endIndent: 0,
             color: Colors.black12,
           ),
-          FilePathView(rootPath: widget.rootPath,),
+          FilePathView(
+            rootPath: widget.rootPath,
+          ),
           const Divider(
             height: 0,
             indent: 0,
             endIndent: 0,
             color: Colors.black12,
           ),
-          Expanded(child: FileListShowView(rootPath: widget.rootPath,)),
+          Expanded(
+              child: FileListShowView(
+            rootPath: widget.rootPath,
+          )),
         ],
       ),
     );

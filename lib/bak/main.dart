@@ -1,6 +1,6 @@
 import 'package:file_manager/api/user_operate.dart';
 import 'package:file_manager/bak/setting.dart';
-import 'package:file_manager/entry/Info.dart';
+import 'package:file_manager/entry/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'file_home_page.dart';

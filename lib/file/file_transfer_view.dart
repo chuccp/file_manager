@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/flutter_treeview.dart';
+import 'package:provider/provider.dart';
 import '../component/ex_tree_tab.dart';
+import 'file_mange.dart';
 
 class FileTransferView extends StatelessWidget {
   const FileTransferView({super.key});
@@ -38,28 +40,35 @@ class FileTransferListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> entries = <String>['A', 'B', 'C'];
-    final List<int> colorCodes = <int>[600, 500, 100];
+
+
+    var items = Provider.of<FilePageDelegate>(context).progresses;
+
+    var children = [for(var item in items)  ProcessView(title:item.name!,) ];
+
     return ListView.separated(
         padding: const EdgeInsets.all(0),
-        itemCount: entries.length,
+        itemCount: children.length,
         separatorBuilder: (BuildContext context, int index) => const Divider(
               height: 0,
             ),
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
               onTap: () {},
-              child: const SizedBox(
+              child:  SizedBox(
                 height: 50,
                 child: Align(
-                    alignment: Alignment.centerLeft, child: ProcessView()),
+                    alignment: Alignment.centerLeft, child: children[index]),
               ));
         });
   }
 }
 
 class ProcessView extends StatelessWidget {
-  const ProcessView({super.key});
+   ProcessView({super.key,required this.title});
+
+  String title;
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +79,15 @@ class ProcessView extends StatelessWidget {
             child: Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: const Column(
+                child:  Column(
                   children: [
                     SizedBox(
                         width: double.infinity,
                         child: Text(
-                          "测试",
+                          title,
                           overflow: TextOverflow.ellipsis,
                         )),
-                    SizedBox(
+                    const SizedBox(
                         width: double.infinity,
                         child: Text(
                           "100GB/1000GB",

@@ -1,4 +1,4 @@
-import 'package:file_manager/entry/Info.dart';
+import 'package:file_manager/entry/info.dart';
 import 'package:file_manager/signin/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

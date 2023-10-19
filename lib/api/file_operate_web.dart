@@ -13,7 +13,7 @@ class FileOperateWeb {
   static Future<bool> uploadNewFile(
       {required String rootPath,required String path_,
       required FilePickerResult? pickerResult,
-      dio.ProgressCallback? progressCallback}) async {
+      required dio.ProgressCallback progressCallback}) async {
     PlatformFile? platformFile = pickerResult?.files.first;
     if (platformFile != null ) {
       final formData = dio.FormData.fromMap({
@@ -23,7 +23,7 @@ class FileOperateWeb {
             () =>platformFile.readStream!, platformFile.size,
             filename: platformFile.name)
       });
-      var response = await httpClient.post("${root}upload", data: formData);
+      var response = await httpClient.post("${root}upload", data: formData,onSendProgress:progressCallback);
       if (response.statusCode == 200) {
         return Future.value(true);
       }
