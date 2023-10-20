@@ -38,11 +38,11 @@ class _FileListShowViewState extends State<FileListShowView> {
               loadFileAsset(context:context, rootPath:widget.rootPath, path:items[i].path, isArrow:false);
             } else {
               Future.delayed(const Duration(milliseconds: 100)).then((value) {
-                FilePicker.platform.saveFile(fileName: items[i].name).then((value) {
-                  if (value != null && value.isNotEmpty) {
-                    FileOperate.downLoadFile(fileItem: items[i], localPath: value);
-                  }
-                });
+                // FilePicker.platform.saveFile(fileName: items[i].name).then((value) {
+                //   if (value != null && value.isNotEmpty) {
+                //     FileOperate.downLoadFile(fileItem: items[i], localPath: value);
+                //   }
+                // });
               });
               Provider.of<FilePageDelegate>(context, listen: false).unFocusNodes();
             }

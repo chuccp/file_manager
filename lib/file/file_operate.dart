@@ -19,7 +19,8 @@ void uploadFile(
       progressCallback: (int count, int total) {
         var progress =
             Progress(id: id.toString(), name: name, count: count, total: total);
-        Provider.of<FilePageDelegate>(context, listen: false).updateProgresses(progress);
+        Provider.of<FilePageDelegate>(context, listen: false)
+            .updateProgresses(progress);
       }).then((value) => {
         if (value)
           {
@@ -32,11 +33,30 @@ void uploadFile(
       });
 }
 
+void createFolder(
+    {required BuildContext context,
+    required String rootPath,
+    required String folder}) {
+  var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
+  FileOperate.createNewFolder(path: lastItem.path, folder: folder, rootPath: rootPath)
+      .then((value) => {
+            if (value)
+              {
+                loadFileAsset(
+                    context: context,
+                    rootPath: rootPath,
+                    path: lastItem.path,
+                    isArrow: false)
+              }
+          });
+}
+
 class FileOperateView extends StatelessWidget {
   const FileOperateView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController unameController = TextEditingController();
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
       child: Align(
@@ -73,7 +93,42 @@ class FileOperateView extends StatelessWidget {
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.create_new_folder),
                       label: const Text("新建文件夹"),
-                      onPressed: () {},
+                      onPressed: () => showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context2) => AlertDialog(
+                                  title: const Text('新建文件夹'),
+                                  content: TextField(
+                                    autofocus: true,
+                                    controller: unameController,
+                                    decoration: const InputDecoration(
+                                        hintText: "文件名",
+                                        prefixIcon: Icon(Icons.folder)),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context2, 'Cancel'),
+                                      child: const Text('取消'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        if (unameController.text.isNotEmpty) {
+                                          var rootPath =
+                                              Provider.of<FilePageDelegate>(
+                                                      context,
+                                                      listen: false)
+                                                  .rootPath;
+                                          createFolder(
+                                              context: context!,
+                                              rootPath: rootPath,
+                                              folder: unameController.text);
+                                          unameController.clear();
+                                        }
+                                        Navigator.pop(context2, 'OK');
+                                      },
+                                      child: const Text('确认'),
+                                    ),
+                                  ])),
                     ),
                   ),
                 ],

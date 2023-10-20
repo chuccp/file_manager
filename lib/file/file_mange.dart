@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:file_manager/bak/file_transfer_page.dart';
 import 'package:file_manager/component/ex_load.dart';
 import 'package:file_manager/file/file_setting.dart';
 import 'package:file_manager/file/file_transfer_view.dart';
@@ -125,24 +124,6 @@ void loadFileAsset(
         Provider.of<FilePageDelegate>(context, listen: false).toPath(
             path: path, fileItems: value, isArrow: isArrow, rootPath: rootPath)
       });
-}
-
-void createFolder(
-    {required BuildContext context,
-    required String rootPath,
-    required String folder}) {
-  var lastItem = Provider.of<FilePageDelegate>(context, listen: false).lastItem;
-  FileOperate.createNewFolder(path: lastItem.path, folder: folder)
-      .then((value) => {
-            if (value)
-              {
-                loadFileAsset(
-                    context: context,
-                    rootPath: rootPath,
-                    path: lastItem.path,
-                    isArrow: false)
-              }
-          });
 }
 
 class FileManage extends StatelessWidget {
@@ -277,13 +258,11 @@ class FileShowPage extends StatefulWidget {
 }
 
 class _FileShowPageState extends State<FileShowPage> {
+
   @override
   Widget build(BuildContext context) {
     // print("rootPath ${widget.rootPath}");
-
-    loadFileAsset(
-        context: context, rootPath: widget.rootPath, path: "/", isArrow: false);
-
+    loadFileAsset(context: context, rootPath: widget.rootPath, path: "/", isArrow: false);
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
       child: Column(
@@ -312,4 +291,6 @@ class _FileShowPageState extends State<FileShowPage> {
       ),
     );
   }
+
+
 }
