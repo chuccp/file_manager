@@ -18,7 +18,7 @@ import '../util/local_store.dart';
 import 'httpclient.dart';
 
 class UserOperateWeb {
-  static String root = "http://127.0.0.1:2156/user/";
+  static String root = "${getBaseUrl()}user/";
 
   static final httpClient = dio.Dio();
 

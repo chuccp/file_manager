@@ -4,8 +4,10 @@ import 'package:path/path.dart' as path;
 import '../entry/file.dart';
 import 'package:dio/dio.dart' as dio;
 
+import 'httpclient.dart';
+
 class FileOperateWeb {
-  static String root = "http://127.0.0.1:2156/file/";
+  static String root = "${getBaseUrl()}file/";
 
   static Future<bool> uploadNewFile(
       {required String rootPath,
