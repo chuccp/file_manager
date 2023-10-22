@@ -12,8 +12,8 @@ Future<Options> getOptions() async {
 }
 
 String getBaseUrl() {
-  if (kReleaseMode) {
-    return "/";
-  }
+  // if (kReleaseMode) {
+  //   return "/";
+  // }
   return "http://127.0.0.1:2156/";
 }

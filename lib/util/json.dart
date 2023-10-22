@@ -2,7 +2,7 @@ class Json {
   static String getString(Map<String, dynamic> json, String key) {
     if (json.containsKey(key)) {
       var value = json[key];
-      if (value.runtimeType == String) {
+      if (value is String) {
         return value;
       }
     }
@@ -12,7 +12,7 @@ class Json {
   static List<String> getListString(Map<String, dynamic> json, String key) {
     if (json.containsKey(key)) {
       var value = json[key];
-      if (value.runtimeType == List) {
+      if (value is List<dynamic>) {
         List<dynamic> list = value;
         List<String> strList = [];
         for (var value in list) {
@@ -27,7 +27,7 @@ class Json {
   static List<dynamic> getListDynamic(Map<String, dynamic> json, String key) {
     if (json.containsKey(key)) {
       var value = json[key];
-      if (value.runtimeType == List) {
+      if (value is List<dynamic>) {
         List<dynamic> list = value;
         return list;
       }
@@ -38,7 +38,7 @@ class Json {
   static int getInt(Map<String, dynamic> json, String key) {
     if (json.containsKey(key)) {
       var value = json[key];
-      if (value.runtimeType == int) {
+      if (value is int) {
         return value;
       }
     }
@@ -58,7 +58,7 @@ class Json {
   static bool getBool(Map<String, dynamic> json, String key) {
     if (json.containsKey(key)) {
       var value = json[key];
-      if (value.runtimeType == bool) {
+      if (value is bool) {
         return value;
       }
     }

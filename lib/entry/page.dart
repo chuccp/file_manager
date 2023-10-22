@@ -15,6 +15,9 @@ class ExPage<T> {
     exPage.total = Json.getInt(json, "total");
 
     exPage.list = ExPath.fromListJson(Json.getListDynamic(json, "list"));
+
+    print("data:${exPage.list}");
+
     return exPage;
   }
 }

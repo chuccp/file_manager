@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:file_manager/entry/page.dart';
 import 'package:file_manager/entry/path.dart';
 import 'package:file_manager/util/json.dart';
@@ -20,7 +22,8 @@ class Response<T> {
   static Response<ExPage<ExPath>> fromJsonToPathPage(Map<String, dynamic> json) {
     var page = Response<ExPage<ExPath>>();
     page.code = Json.getInt(json, "code");
-    page.data = ExPage.fromPathJson(Json.getDynamic(json, "data"));
+    var data = Json.getDynamic(json, "data");
+    page.data = ExPage.fromPathJson(data);
     return page;
   }
 }

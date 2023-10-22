@@ -36,6 +36,11 @@ void main() {
                   ),
                   GoRoute(
                     path: '/file',
+                    redirect: (context, state) {
+                      if (state.extra == null) {
+                        return "/";
+                      }
+                    },
                     builder: (context, state) {
                       return  const FileManage();
                     },
@@ -143,15 +148,13 @@ class _LoadingPageState extends State<LoadingPage> {
     UserOperateWeb.info().then((value) {
       if(value.hasInit!){
         if(value.hasSignIn!){
-          GoRouter.of(context).go("/file");
+          GoRouter.of(context).go("/file", extra: {"info": value});
         }else{
           GoRouter.of(context).go("/signIn", extra: {"info": value});
         }
       }else{
         GoRouter.of(context).go("/signUp", extra: {"info": value});
       }
-
-
     });
   }
 

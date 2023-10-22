@@ -204,30 +204,30 @@ class FileTreePage extends StatefulWidget {
 
 class _FileTreePageState extends State<FileTreePage> {
   List<Node> nodes = [];
-
   String selectedKey = "";
-
   _updateNode(List<Node> nodes) {
-    setState(() {
-      this.nodes.clear();
-      this.nodes.addAll(nodes);
-      selectedKey = nodes[0].key;
-    });
+    if (nodes.isNotEmpty) {
+      setState(() {
+        this.nodes.clear();
+        this.nodes.addAll(nodes);
+        selectedKey = nodes[0].key;
+      });
+    }
   }
 
   @override
   void initState() {
-    UserOperateWeb.queryAllPath().then((value) => {
-          _updateNode(<Node>[
-            for (var v in value.data!.list!)
-              Node(
-                label: v.name!,
-                key: v.path!,
-                icon: Icons.folder,
-                expanded: false,
-              )
-          ])
-        });
+    UserOperateWeb.queryAllPath().then((value) {
+      _updateNode(<Node>[
+        for (var v in value.data!.list!)
+          Node(
+            label: v.name!,
+            key: v.path!,
+            icon: Icons.folder,
+            expanded: false,
+          )
+      ]);
+    });
   }
 
   @override
@@ -258,11 +258,11 @@ class FileShowPage extends StatefulWidget {
 }
 
 class _FileShowPageState extends State<FileShowPage> {
-
   @override
   Widget build(BuildContext context) {
     // print("rootPath ${widget.rootPath}");
-    loadFileAsset(context: context, rootPath: widget.rootPath, path: "/", isArrow: false);
+    loadFileAsset(
+        context: context, rootPath: widget.rootPath, path: "/", isArrow: false);
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 4, 4, 4),
       child: Column(
@@ -291,6 +291,4 @@ class _FileShowPageState extends State<FileShowPage> {
       ),
     );
   }
-
-
 }
