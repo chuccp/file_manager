@@ -35,15 +35,17 @@ class AddressInput extends StatefulWidget {
       {super.key,
       this.addressController,
       this.autofocus = false,
-      required this.onDeletePressed,
-      required this.onTestPressed});
+      this.onDeletePressed,
+      this.onTestPressed,this.onChangePressed});
 
   final AddressController? addressController;
   final bool autofocus;
 
-  final VoidCallback onDeletePressed;
+  final VoidCallback? onDeletePressed;
 
-  final VoidCallback onTestPressed;
+  final VoidCallback? onChangePressed;
+
+  final VoidCallback? onTestPressed;
 
   @override
   State<StatefulWidget> createState() => _AddressInputState();
@@ -52,70 +54,99 @@ class AddressInput extends StatefulWidget {
 class _AddressInputState extends State<AddressInput> {
   @override
   Widget build(BuildContext context) {
+    var childrenView = <Widget>[];
+    childrenView.add(const Spacer(
+      flex: 1,
+    ));
+
+    childrenView.add(Expanded(
+      flex: 7,
+      child: TextField(
+        controller: widget.addressController?._hostController,
+        autofocus: widget.autofocus,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9-.]"))
+        ],
+        decoration: const InputDecoration(
+          labelText: "服务器地址",
+        ),
+      ),
+    ));
+    childrenView.add(const Spacer(
+      flex: 1,
+    ));
+
+    childrenView.add(Expanded(
+      flex: 4,
+      child: TextField(
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
+        controller: widget.addressController?._portController,
+        decoration: const InputDecoration(
+          labelText: "端口号",
+        ),
+      ),
+    ));
+
+    if (widget.onTestPressed != null) {
+      childrenView.add(const Spacer(
+        flex: 1,
+      ));
+      childrenView.add(Expanded(
+        flex: 3,
+        child: ElevatedButton(
+          style:
+              ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          onPressed: () {
+            if (widget.onTestPressed != null) {
+              widget.onTestPressed!();
+            }
+          },
+          child: const Text("测试"),
+        ),
+      ));
+    }
+    if (widget.onDeletePressed != null) {
+      childrenView.add(const Spacer(
+        flex: 1,
+      ));
+      childrenView.add(Expanded(
+        flex: 3,
+        child: OutlinedButton(
+          style:
+              ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          onPressed: () {
+            if (widget.onDeletePressed != null) {
+              widget.onDeletePressed!();
+            }
+          },
+          child: const Text("删除"),
+        ),
+      ));
+    }
+
+    if (widget.onChangePressed != null) {
+      childrenView.add(const Spacer(
+        flex: 1,
+      ));
+      childrenView.add(Expanded(
+        flex: 3,
+        child: OutlinedButton(
+          style:
+          ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.zero)),
+          onPressed: () {
+            if (widget.onChangePressed != null) {
+              widget.onChangePressed!();
+            }
+          },
+          child: const Text("更换"),
+        ),
+      ));
+    }
+
     return SizedBox(
       width: 380,
-      child: Flex(direction: Axis.horizontal, children: <Widget>[
-        const Spacer(
-          flex: 1,
-        ),
-        Expanded(
-          flex: 7,
-          child: TextField(
-            controller: widget.addressController?._hostController,
-            autofocus: widget.autofocus,
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9-.]"))],
-            decoration: const InputDecoration(
-              labelText: "服务器地址",
-            ),
-          ),
-        ),
-        const Spacer(
-          flex: 1,
-        ),
-        Expanded(
-          flex: 4,
-          child: TextField(
-            keyboardType:TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9]"))],
-            controller: widget.addressController?._portController,
-            decoration: const InputDecoration(
-              labelText: "端口号",
-            ),
-          ),
-        ),
-        const Spacer(
-          flex: 1,
-        ),
-        Expanded(
-          flex: 3,
-          child: ElevatedButton(
-            style: ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.zero)),
-            onPressed: () {
-              if (widget.onTestPressed != null) {
-                widget.onTestPressed!();
-              }
-            },
-            child: const Text("测试"),
-          ),
-        ),
-        const Spacer(
-          flex: 1,
-        ),
-        Expanded(
-          flex: 3,
-          child: OutlinedButton(
-            style: ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.zero)),
-            onPressed: () {
-              if (widget.onDeletePressed != null) {
-                widget.onDeletePressed!();
-              }
-            },
-            child: const Text("删除"),
-          ),
-        ),
-      ]),
+      child: Flex(direction: Axis.horizontal, children: childrenView),
     );
   }
 }

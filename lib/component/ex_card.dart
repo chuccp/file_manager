@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class ExCard extends StatelessWidget {
   const ExCard(
       {super.key,
-      this.width,
-      this.height,
+      required this.width,
+      required this.height,
       required this.child,
       this.title,
       this.footer});
 
   final Widget child;
-  final double? width;
-  final double? height;
+  final double width;
+  final double height;
   final String? title;
   final Widget? footer;
 

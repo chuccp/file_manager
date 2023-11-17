@@ -190,7 +190,7 @@ class _FileDelegateManageState extends State<FileDelegateManage> {
           } else if (_selectedTab == 1) {
             return const FileTransferView();
           }
-          return const ExLoading();
+          return  ExLoading();
         });
   }
 }
@@ -238,7 +238,7 @@ class _FileTreePageState extends State<FileTreePage> {
       nodes: nodes,
       body: (_, index) {
         if (index == "") {
-          return const ExLoading();
+          return  ExLoading();
         }
         return FileShowPage(
           rootPath: index,

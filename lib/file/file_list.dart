@@ -25,7 +25,7 @@ class _FileListShowViewState extends State<FileListShowView> {
     var items = Provider.of<FilePageDelegate>(context).fileItems;
     var focusNodes = Provider.of<FilePageDelegate>(context).focusNodes;
     if (items.isEmpty || focusNodes.isEmpty){
-      return const ExLoading();
+      return  ExLoading();
     }
     final List<Widget> children = <Widget>[
       for (int i = 0; i < items.length; i++)

@@ -1,8 +1,11 @@
+import 'package:file_manager/choose.dart';
+import 'package:file_manager/component/ex_load.dart';
 import 'package:file_manager/entry/info.dart';
 import 'package:file_manager/signin/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'api/user_operate.dart';
+import 'client/select_server.dart';
 import 'file/file_mange.dart';
 import 'setting/setting.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -26,6 +29,12 @@ void main() {
                     path: '/load',
                     builder: (context, state) {
                       return const LoadingPage();
+                    },
+                  ),
+                  GoRoute(
+                    path: '/choose',
+                    builder: (context, state) {
+                      return const ChoosePage();
                     },
                   ),
                   GoRoute(
@@ -95,6 +104,21 @@ void main() {
                                 return NetSetPage(info: info);
                               })
                         ]),
+
+                        StatefulShellBranch(routes: [
+                          GoRoute(
+                            path: '/selectServer',
+                            // redirect: (context, state) {
+                            //   if (state.extra == null) {
+                            //     return "/";
+                            //   }
+                            // },
+                            builder: (context, state) {
+                              return const SelectServerPage();
+                            },
+                          )
+                        ]),
+
                       ])
                 ]),
               ])
@@ -141,7 +165,7 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   @override
   Widget build(BuildContext context) {
-    return const Text("加载中");
+    return  ExLoading();
   }
 
   void go() {
@@ -153,7 +177,8 @@ class _LoadingPageState extends State<LoadingPage> {
           GoRouter.of(context).go("/signIn", extra: {"info": value});
         }
       }else{
-        GoRouter.of(context).go("/signUp", extra: {"info": value});
+        // GoRouter.of(context).go("/signUp", extra: {"info": value});
+        GoRouter.of(context).go("/choose", extra: {"info": value});
       }
     });
   }

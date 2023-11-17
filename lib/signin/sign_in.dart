@@ -46,7 +46,7 @@ class SignInPage extends StatelessWidget {
                       }
                     }
                   });
-                  ;
+
                 },
               )
             ],
